@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CharityConnect — Donations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a class="brand" href="{{ url_for('index') }}">CharityConnect</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">🏠 Home</a></li>
+                <li><a href="{{ url_for('ngo_view') }}">📦 Donations</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>📦 Donations for Your Organization</h1>
+        <p style="color: #718096; margin-bottom: 24px;">Manage and track donations received by your organization</p>
+
+        {% if donations and donations|length > 0 %}
+        <div style="margin-bottom: 24px;">
+            <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); padding: 16px; border-radius: 10px; border-left: 4px solid #667eea; margin-bottom: 20px;">
+                {% set pending_count = donations|selectattr('status', 'equalto', 'Pending')|list|length %}
+                <p style="margin: 0; color: #2d3748;">
+                    <strong>Total Donations:</strong> {{ donations|length }} 
+                    <span style="margin-left: 16px; color: #c53030;">
+                        <strong>⏳ Pending:</strong> {{ pending_count }}
+                    </span>
+                </p>
+            </div>
+
+            <div style="display: grid; gap: 12px;">
+                {% for donation in donations %}
+                <div class="card" style="margin-bottom: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px; color: #667eea;">{{ donation.product_type }}</h3>
+                            <p style="margin: 4px 0; color: #718096;">
+                                <strong>Quantity:</strong> {{ donation.quantity }} units
+                            </p>
+                            <p style="margin: 4px 0; color: #718096;">
+                                <strong>From Donor:</strong> <span style="color: #2d3748;">{{ donation.donor.username }}</span>
+                            </p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                            <span style="display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+                                {% if donation.status == 'Pending' %}
+                                background: #fed7d7; color: #c53030;
+                                {% else %}
+                                background: #c6f6d5; color: #22543d;
+                                {% endif %}
+                            ">
+                                {% if donation.status == 'Pending' %}⏳{% else %}✓{% endif %} {{ donation.status }}
+                            </span>
+                            {% if donation.status == 'Pending' %}
+                            <button onclick="updateStatus({{ donation.id }})" class="btn btn-small" style="width: 100%;">
+                                ✓ Mark as Received
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="note">
+            📭 No donations received yet. Share your organization profile with donors to start receiving donations!
+        </div>
+        {% endif %}
+
+        <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="{{ url_for('index') }}" class="btn btn-outline">🏠 Back to Home</a>
+            <a href="/logout" class="btn btn-outline">🚪 Logout</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

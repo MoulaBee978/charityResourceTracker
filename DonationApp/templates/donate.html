@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CharityConnect — Donate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a class="brand" href="{{ url_for('index') }}">CharityConnect</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">🏠 Home</a></li>
+                <li><a href="{{ url_for('donate') }}">💝 Donate</a></li>
+                <li><a href="{{ url_for('donor_view') }}">📊 My Donations</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>💝 Make a Donation</h1>
+        <p style="color: #718096; margin-bottom: 24px;">Your generosity can change lives. Select an organization and donate today!</p>
+
+        <form id="donateForm">
+            <div class="form-group">
+                <label for="product_type">📦 What are you donating?</label>
+                <input type="text" id="product_type" name="product_type" placeholder="e.g., Clothes, Books, Food, Electronics" required>
+                <span class="form-hint">Be specific about the type of item</span>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">📊 Quantity</label>
+                <input type="number" id="quantity" name="quantity" placeholder="Number of items" min="1" required>
+                <span class="form-hint">How many items are you donating?</span>
+            </div>
+
+            <div class="form-group">
+                <label for="ngo_id">🤝 Select NGO</label>
+                {% if ngos and ngos|length > 0 %}
+                <select id="ngo_id" name="ngo_id" required>
+                    <option value="" disabled selected>Choose an organization...</option>
+                    {% for ngo in ngos %}
+                    <option value="{{ ngo.id }}">{{ ngo.username }}</option>
+                    {% endfor %}
+                </select>
+                <span class="form-hint">Select the organization that will receive your donation</span>
+                {% else %}
+                <select id="ngo_id" name="ngo_id" disabled>
+                    <option value="" disabled selected>No NGOs registered yet</option>
+                </select>
+                <div class="note">
+                    ⚠️ No NGOs are currently registered. Please ask an organization to <a href="/register">register as an NGO</a> so you can donate to them.
+                </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" id="donateBtn" class="btn" {% if not ngos or ngos|length == 0 %}disabled{% endif %}>
+                ✓ Donate Now
+            </button>
+        </form>
+
+        <div id="message"></div>
+
+        <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="/donor_view" class="btn btn-small btn-outline">📊 My Donations</a>
+            <a href="{{ url_for('index') }}" class="btn btn-small btn-outline">🏠 Back to Home</a>
+            <a href="/logout" class="btn btn-small btn-outline">🚪 Logout</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

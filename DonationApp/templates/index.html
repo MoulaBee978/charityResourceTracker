@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CharityConnect — Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a class="brand" href="{{ url_for('index') }}">CharityConnect</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">🏠 Home</a></li>
+                {% if current_user.is_authenticated and current_user.role == 'donor' %}
+                <li><a href="{{ url_for('donate') }}">💝 Donate</a></li>
+                <li><a href="{{ url_for('donor_view') }}">📊 My Donations</a></li>
+                {% elif current_user.is_authenticated and current_user.role == 'ngo' %}
+                <li><a href="{{ url_for('ngo_view') }}">📦 Donations</a></li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('register') }}">📝 Register</a></li>
+                <li><a href="{{ url_for('login') }}">🔐 Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>❤️ CharityConnect</h1>
+        <p class="lead">Connecting passionate donors with impactful NGOs — make a real difference today.</p>
+    </header>
+
+    <div class="container">
+        {% if current_user.is_authenticated %}
+        <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); padding: 20px; border-radius: 12px; margin-bottom: 24px; border-left: 4px solid #667eea;">
+            <p style="margin: 0; color: #2d3748;">
+                👋 Welcome, <strong>{{ current_user.username }}</strong> 
+                <span style="display: inline-block; background: #667eea; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; margin-left: 8px;">
+                    {% if current_user.role == 'donor' %}💝 Donor{% else %}🤝 NGO{% endif %}
+                </span>
+            </p>
+        </div>
+
+        <div class="actions">
+            {% if current_user.role == 'donor' %}
+            <a class="btn" href="/donate">💝 Make a Donation</a>
+            <a class="btn btn-outline" href="/donor_view">📊 My Donations</a>
+            {% else %}
+            <a class="btn" href="/ngo_view">📦 View Donations</a>
+            {% endif %}
+            <a class="btn btn-outline" href="/logout">🚪 Logout</a>
+        </div>
+        {% else %}
+        <div style="text-align: center; margin-bottom: 32px;">
+            <h2 style="color: #2d3748; margin-bottom: 16px;">Get Started Today</h2>
+            <p style="color: #718096; font-size: 1.1rem; margin-bottom: 24px;">Join our community and make an impact</p>
+            <div class="actions">
+                <a class="btn" href="/register">📝 Create Account</a>
+                <a class="btn btn-outline" href="/login">🔐 Sign In</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <hr style="margin: 32px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+        <div style="margin: 32px 0;">
+            <h2 style="text-align: center; margin-bottom: 24px;">📈 Our Impact</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>💝 Total Donations</h3>
+                    <div class="number">{{ total_donations }}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>📦 Quantity Donated</h3>
+                    <div class="number">{{ total_quantity }}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>🤝 NGOs</h3>
+                    <div class="number">{{ ngo_count }}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>👥 Donors</h3>
+                    <div class="number">{{ donor_count }}</div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
